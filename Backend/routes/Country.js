@@ -2,7 +2,6 @@ import express from 'express';
 import multer from 'multer';
 import { createCountry, deleteCountry, editCountry, getAllCountries, getCountryById } from '../controller/Country.js';
 
-
 const router = express.Router();
 const upload = multer();
 
@@ -42,10 +41,17 @@ const upload = multer();
  *                 type: string
  *               language:
  *                 type: string
+ *               arts_and_crafts:
+ *                 type: string
+ *               cultural_dance:
+ *                 type: string
+ *                 description: Optional field
  *               time_zone:
  *                 type: string
+ *                 description: Optional field
  *               link:
  *                 type: string
+ *                 description: Optional field
  *               image:
  *                 type: string
  *                 format: binary
@@ -57,10 +63,9 @@ router.post(
     '/countries',
     upload.fields([
       { name: 'image', maxCount: 1 },
-
     ]),
     createCountry
-  );
+);
 
 /**
  * @swagger
@@ -97,7 +102,6 @@ router.get('/countries', getAllCountries);
  *       404:
  *         description: Country not found
  */
-
 router.get('/countries/:id', getCountryById);
 
 /**
@@ -105,7 +109,7 @@ router.get('/countries/:id', getCountryById);
  * /country/countries/{id}:
  *   patch:
  *     summary: Update a country
- *     description: Updates a country's information and optionally its image or gallery.
+ *     description: Updates a country's information and optionally its image.
  *     consumes:
  *       - multipart/form-data
  *     tags:
@@ -124,24 +128,46 @@ router.get('/countries/:id', getCountryById);
  *           schema:
  *             type: object
  *             properties:
+ *               title:
+ *                 type: string
+ *               president:
+ *                 type: string
+ *               independence_date:
+ *                 type: string
+ *               capital:
+ *                 type: string
+ *               currency:
+ *                 type: string
+ *               population:
+ *                 type: string
+ *               demonym:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               language:
+ *                 type: string
+ *               arts_and_crafts:
+ *                 type: string
+ *               cultural_dance:
+ *                 type: string
+ *                 description: Optional field
+ *               time_zone:
+ *                 type: string
+ *                 description: Optional field
+ *               link:
+ *                 type: string
+ *                 description: Optional field
  *               image:
  *                 type: string
  *                 format: binary
- *               gallery:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: binary
  *     responses:
  *       200:
  *         description: Country updated successfully
  *       404:
  *         description: Country not found
  */
-
 router.patch('/countries/:id', upload.fields([
-
-  { name: "gallery", maxCount: 6 },
+  { name: 'image', maxCount: 1 }, // Added missing image field
 ]), editCountry);
 
 /**
