@@ -30,10 +30,15 @@ export const createCountry = asyncHandler(async (req, res) => {
     currency,
     population,
     demonym,
+    // latitude,
+    // longitude,
     description,
     language,
     time_zone,
     link,
+    // association_leader_name,
+    // association_leader_email,
+    // association_leader_phone,
     arts_and_crafts,
     cultural_dance,
     created_by_id,
@@ -49,8 +54,32 @@ export const createCountry = asyncHandler(async (req, res) => {
     imageUrl = imageUpload.secure_url;
   }
 
+  // Upload gallery images if provided
+  // const galleryUrls = [];
+  // if (req.files?.gallery) {
+  //   const galleryFiles = req.files.gallery.slice(0, 6);
+  //   for (const file of galleryFiles) {
+  //     const galleryUpload = await uploadToCloudinary(
+  //       file.buffer,
+  //       'countries/gallery'
+  //     );
+  //     galleryUrls.push(galleryUpload.secure_url);
+  //   }
+  // }
+
+  // Upload association leader photo if provided
+  // let leaderPhotoUrl = null;
+  // if (req.files?.association_leader_photo?.[0]) {
+  //   const leaderPhotoUpload = await uploadToCloudinary(
+  //     req.files.association_leader_photo[0].buffer,
+  //     'countries/leaders'
+  //   );
+  //   leaderPhotoUrl = leaderPhotoUpload.secure_url;
+  // }
+
   const country = new Country({
     image: imageUrl,
+//    gallery: galleryUrls,
     title,
     president,
     independence_date,
@@ -58,12 +87,18 @@ export const createCountry = asyncHandler(async (req, res) => {
     currency,
     population,
     demonym,
+    // latitude,
+    // longitude,
     description,
     language,
-    time_zone: time_zone || "", // Make optional with default empty string
-    link: link || "", // Make optional with default empty string
+    time_zone,
+    link,
+    // association_leader_name,
+    // association_leader_email,
+    // association_leader_phone,
+    // association_leader_photo: leaderPhotoUrl,
     arts_and_crafts,
-    cultural_dance: cultural_dance || "", // Make optional with default empty string
+    cultural_dance,
     created_by_id
   });
 
@@ -144,10 +179,15 @@ export const editCountry = asyncHandler(async (req, res) => {
     currency,
     population,
     demonym,
+    // latitude,
+    // longitude,
     description,
     language,
     time_zone,
     link,
+    // association_leader_name,
+    // association_leader_email,
+    // association_leader_phone,
     arts_and_crafts,
     cultural_dance
   } = req.body;
@@ -162,32 +202,57 @@ export const editCountry = asyncHandler(async (req, res) => {
     imageUrl = imageUpload.secure_url;
   }
 
-  // Create update object with proper handling of optional fields
-  const updateData = {
-    image: imageUrl,
-  };
+  // Upload gallery images if provided
+  // let galleryUrls = existingCountry.gallery || [];
+  // if (req.files?.gallery?.length > 0) {
+  //   // Replace existing gallery with new uploads
+  //   galleryUrls = [];
+  //   const galleryFiles = req.files.gallery.slice(0, 6);
+  //   for (const file of galleryFiles) {
+  //     const galleryUpload = await uploadToCloudinary(
+  //       file.buffer,
+  //       'countries/gallery'
+  //     );
+  //     galleryUrls.push(galleryUpload.secure_url);
+  //   }
+  // }
 
-  // Only update fields that are provided (including empty strings for optional fields)
-  if (title !== undefined) updateData.title = title;
-  if (president !== undefined) updateData.president = president;
-  if (independence_date !== undefined) updateData.independence_date = independence_date;
-  if (capital !== undefined) updateData.capital = capital;
-  if (currency !== undefined) updateData.currency = currency;
-  if (population !== undefined) updateData.population = population;
-  if (demonym !== undefined) updateData.demonym = demonym;
-  if (description !== undefined) updateData.description = description;
-  if (language !== undefined) updateData.language = language;
-  if (arts_and_crafts !== undefined) updateData.arts_and_crafts = arts_and_crafts;
-
-  // Optional fields - allow empty strings
-  if (time_zone !== undefined) updateData.time_zone = time_zone;
-  if (link !== undefined) updateData.link = link;
-  if (cultural_dance !== undefined) updateData.cultural_dance = cultural_dance;
+  // Upload association leader photo if provided
+  // let leaderPhotoUrl = existingCountry.association_leader_photo;
+  // if (req.files?.association_leader_photo?.[0]) {
+  //   const leaderPhotoUpload = await uploadToCloudinary(
+  //     req.files.association_leader_photo[0].buffer,
+  //     'countries/leaders'
+  //   );
+  //   leaderPhotoUrl = leaderPhotoUpload.secure_url;
+  // }
 
   // Update country
   const updatedCountry = await Country.findByIdAndUpdate(
     id,
-    updateData,
+    {
+      ...(title && { title }),
+      ...(arts_and_crafts && { arts_and_crafts }),
+      ...(cultural_dance && { cultural_dance }),
+      ...(president && { president }),
+      ...(independence_date && { independence_date }),
+      ...(capital && { capital }),
+      ...(currency && { currency }),
+      ...(population && { population }),
+      ...(demonym && { demonym }),
+      // ...(latitude && { latitude }),
+      // ...(longitude && { longitude }),
+      ...(description && { description }),
+      ...(language && { language }),
+      ...(time_zone && { time_zone }),
+      ...(link && { link }),
+      // ...(association_leader_name && { association_leader_name }),
+      // ...(association_leader_email && { association_leader_email }),
+      // ...(association_leader_phone && { association_leader_phone }),
+      image: imageUrl,
+      // gallery: galleryUrls,
+      // association_leader_photo: leaderPhotoUrl,
+    },
     { new: true } // Return the updated document
   );
 
