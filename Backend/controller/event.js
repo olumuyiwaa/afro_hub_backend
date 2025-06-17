@@ -25,8 +25,17 @@ const parsePricingData = (body) => {
   const pricingMap = new Map();
 
   // Priority 1: Check for pricingOptions array format (most flexible)
-  if (body.pricingOptions && Array.isArray(body.pricingOptions)) {
-    body.pricingOptions.forEach((option, index) => {
+  let pricingOptions = body.pricingOptions;
+  if (typeof pricingOptions === 'string') {
+    try {
+      pricingOptions = JSON.parse(pricingOptions);
+    } catch (e) {
+      pricingOptions = null;
+    }
+  }
+
+  if (pricingOptions && Array.isArray(pricingOptions)) {
+    pricingOptions.forEach((option, index) => {
       if (option.name && option.price !== undefined && option.available !== undefined) {
         const ticketId = option.id || `option_${index + 1}`;
         pricingMap.set(ticketId, {
