@@ -25,10 +25,14 @@ const transactionSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    // Add ticket type to track VIP or Regular
+    // Updated to support flexible ticket types
     ticketType: {
         type: String,
-        enum: ['regular', 'vip'],
+        required: true
+    },
+    // Store the display name of the ticket type for reference
+    ticketTypeName: {
+        type: String,
         required: true
     },
     // Add price per ticket for transparency

@@ -11,7 +11,44 @@ const router = express.Router();
  *     tags: [Events]
  *     responses:
  *       200:
- *         description: List of featured events
+ *         description: List of featured events with pricing information
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   title:
+ *                     type: string
+ *                   location:
+ *                     type: string
+ *                   date:
+ *                     type: string
+ *                   ticketTypes:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                         price:
+ *                           type: number
+ *                         available:
+ *                           type: integer
+ *                         description:
+ *                           type: string
+ *                   priceRange:
+ *                     type: object
+ *                     properties:
+ *                       min:
+ *                         type: number
+ *                       max:
+ *                         type: number
  */
 router.get('/featured', eventController.getFeaturedEvents);
 
@@ -19,7 +56,7 @@ router.get('/featured', eventController.getFeaturedEvents);
  * @swagger
  * /events/{id}:
  *   get:
- *     summary: Get event details by ID
+ *     summary: Get event details by ID with all pricing options
  *     tags: [Events]
  *     parameters:
  *       - in: path
@@ -30,7 +67,61 @@ router.get('/featured', eventController.getFeaturedEvents);
  *           type: string
  *     responses:
  *       200:
- *         description: Event details
+ *         description: Event details with complete pricing information
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 location:
+ *                   type: string
+ *                 date:
+ *                   type: string
+ *                 time:
+ *                   type: string
+ *                 address:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 organiser:
+ *                   type: string
+ *                 image:
+ *                   type: string
+ *                 ticketTypes:
+ *                   type: array
+ *                   description: All available ticket types for this event
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: Unique identifier for the ticket type
+ *                       name:
+ *                         type: string
+ *                         description: Display name of the ticket type
+ *                       price:
+ *                         type: number
+ *                         description: Price per ticket
+ *                       available:
+ *                         type: integer
+ *                         description: Number of tickets available
+ *                       description:
+ *                         type: string
+ *                         description: Additional details about the ticket type
+ *                 totalAvailable:
+ *                   type: integer
+ *                   description: Total tickets available across all types
+ *                 priceRange:
+ *                   type: object
+ *                   properties:
+ *                     min:
+ *                       type: number
+ *                     max:
+ *                       type: number
  *       404:
  *         description: Event not found
  */
@@ -40,7 +131,7 @@ router.get('/:id', eventController.getEventDetails);
  * @swagger
  * /events/{eventId}/buyers:
  *   get:
- *     summary: Get buyers for an event with ticket type breakdown
+ *     summary: Get buyers for an event with detailed ticket type breakdown
  *     tags: [Events]
  *     parameters:
  *       - in: path
@@ -51,18 +142,36 @@ router.get('/:id', eventController.getEventDetails);
  *           type: string
  *     responses:
  *       200:
- *         description: List of event buyers with ticket type details
+ *         description: List of event buyers with comprehensive ticket type details
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
+ *                 eventTitle:
+ *                   type: string
  *                 totalTicketsSold:
  *                   type: number
- *                 regularTicketsSold:
+ *                 totalRevenue:
  *                   type: number
- *                 vipTicketsSold:
+ *                 averageTicketPrice:
  *                   type: number
+ *                 ticketTypeSummary:
+ *                   type: object
+ *                   description: Summary by ticket type
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       count:
+ *                         type: integer
+ *                       revenue:
+ *                         type: number
+ *                       averagePrice:
+ *                         type: number
+ *                 totalTicketTypeOptions:
+ *                   type: integer
  *                 buyers:
  *                   type: array
  *                   items:
@@ -72,11 +181,14 @@ router.get('/:id', eventController.getEventDetails);
  *                         type: string
  *                       full_name:
  *                         type: string
+ *                       email:
+ *                         type: string
  *                       ticketCount:
  *                         type: number
  *                       ticketType:
  *                         type: string
- *                         enum: [regular, vip]
+ *                       ticketTypeName:
+ *                         type: string
  *                       pricePerTicket:
  *                         type: number
  *                       amount:
@@ -84,6 +196,8 @@ router.get('/:id', eventController.getEventDetails);
  *                       purchaseDate:
  *                         type: string
  *                         format: date-time
+ *                       transactionId:
+ *                         type: string
  *       404:
  *         description: No tickets sold or event not found
  */
