@@ -140,8 +140,7 @@ const eventController = {
   getFeaturedEvents: async (req, res) => {
     try {
       const events = await Event.find()
-        .sort({ date: 1 })
-        .limit(10);
+        .sort({ date: 1 });
 
       // Convert pricing Map to Object for JSON response
       const formattedEvents = events.map(event => {
